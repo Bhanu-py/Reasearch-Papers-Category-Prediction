@@ -60,9 +60,9 @@ messages_bow_test = bow_transformer_train.transform(test_df["Content"])
 print("'Data is Preprocessed'")
 
 classifier = OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None)).fit(messages_bow_train, train_df_y) ### 0.79
-# classifier = LabelPowerset(LogisticRegression())
-# classifier = ClassifierChain(classifier=RandomForestClassifier(n_estimators=100), require_dense = [False, True])
-# classifier = BinaryRelevance(GaussianNB())
+# classifier2 = LabelPowerset(LogisticRegression())
+# classifier3 = ClassifierChain(classifier=RandomForestClassifier(n_estimators=100), require_dense = [False, True])
+# classifier4 = BinaryRelevance(GaussianNB())
 # rf = RandomForestClassifier()
 print("'Model is Created'")
 
