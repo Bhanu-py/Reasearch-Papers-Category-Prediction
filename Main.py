@@ -59,12 +59,54 @@ messages_bow_test = bow_transformer_train.transform(test_df["Content"])
 # print
 print("'Data is Preprocessed'")
 
+# Create and fit tokenizer
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(train_df_x)
+vocab_size = len(tokenizer.word_index) + 1
+
+# Prepare the data
+prep_data = tokenizer.texts_to_sequences(train_df_x)
+prep_data = pad_sequences(prep_data, maxlen=200)
+
+# Prepare the labels
+prep_labels = to_categorical(news_dataset.target)
+
+model = Sequential()
+model.add(Embedding(vocabulary_size, wordvec_dim, trainable=True, input_length=200))
+model.add(LSTM(64, return_sequences=True, dropout=0.2, recurrent_dropout=0.15))
+model.add(LSTM(64, return_sequences=False, dropout=0.2, recurrent_dropout=0.15))
+model.add(Dense(16))
+model.add(Dropout(rate=0.25))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+loss, acc = model_cnn.evaluate(x_test, y_test, verbose=0)
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train','test'], loc='upper left')
+plt.show()
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train','test'], loc='upper left')
+plt.show()
+
+
+
 classifier = OneVsRestClassifier(MultinomialNB(fit_prior=True, class_prior=None)).fit(messages_bow_train, train_df_y) ### 0.79
 # classifier2 = LabelPowerset(LogisticRegression())
 # classifier3 = ClassifierChain(classifier=RandomForestClassifier(n_estimators=100), require_dense = [False, True])
 # classifier4 = BinaryRelevance(GaussianNB())
 # rf = RandomForestClassifier()
 print("'Model is Created'")
+
 
 print("Model is Training----------------")
 classifier.fit(messages_bow_train, train_df_y)
